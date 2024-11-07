@@ -16,30 +16,29 @@ export const loader =
     ])
     console.log('params', params)
 
-    // const type = params.type || ''
+    const type = params.type || ''
     // Construct the URL based on the 'type'
-    // const url = `/menu${type ? `?type=${type}` : ''}`
-    // const API_URL = 'http://localhost:3000/api/menu'
-    // const API_KEY = 'fallow'
+    const url = `/menu${type ? `?type=${type}` : ''}`
+    const API_URL = 'http://localhost:3000/api/menu'
+    const API_KEY = 'fallow'
     try {
-      // Fetch the menu data using customFetch (ensure customFetch is set up with the correct base URL)
-      //const response = await customFetch<MenuItemsResponse>(url)
-      // const response = await fetch(`${API_URL}${type ? `?type=${type}` : ''}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     Accept: 'application/json',
-      //     'Content-Type': 'application/json',
-      //     'x-zocom': API_KEY,
-      //   },
-      // })
-      // if (!response.ok) {
-      //   throw new Error(`Error: ${response.statusText}`)
-      // }
-      // // Parse JSON data
-      // const data = await response.json()
-      // console.log(data)
-      // // Return the response data along with the parameters to pass to the component
-      // return { ...data, params }
+      // const response = await customFetch<MenuItemsResponse>(url)
+      const response = await fetch(`${API_URL}${type ? `?type=${type}` : ''}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'x-zocom': API_KEY,
+        },
+      })
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`)
+      }
+      // Parse JSON data
+      const data = await response.json()
+      console.log(data)
+      // Return the response data along with the parameters to pass to the component
+      return { ...data, params }
       // return { ...response.data, params }
       return true
     } catch (error) {
@@ -48,7 +47,10 @@ export const loader =
     }
   }
 import { useState, useEffect } from 'react'
+import MenuButtons from '@/components/MenuButtons'
+import MenuCards from '@/components/MenuCards'
 const Root = () => {
+  const { items } = useLoaderData() as MenuItemsResponseWithParams
   const test = 'tesgt'
   const response = true // useLoaderData() as any
 
@@ -62,11 +64,22 @@ const Root = () => {
     // Cleanup interval on component unmount
     return () => clearInterval(interval)
   }, [])
+
+  const categories = ['all', ...new Set(items.map((item) => item.type))]
+
   return (
     <div>
       {' '}
       <h1>{text}</h1>
       <p>Response: {response.toString()}</p>
+      {categories.map((cat) => (
+        <MenuButtons cat={cat} />
+      ))}
+      <div className='section-center'>
+        {items.map((item) => (
+          <MenuCards item={item} />
+        ))}
+      </div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Root />,
-    //loader: RootLoader(store),
+    loader: RootLoader(store),
   },
   {
     path: '/:id',
@@ -27,7 +27,15 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <RouterProvider
+      router={router}
+      // future={{
+      //   v7_normalizeFormMethod: true,
+      //   v7_partialHydration: true,
+      // }}
+    />
+  )
 }
 
 export default App
